@@ -25,7 +25,7 @@ class PhpSettings():
 		return []
 
 	def getConsoleStr(self):
-		return "{variable}"
+		return settings().get('php').get('consoleStr', "{title}, {variable}")
 
 	def getConsoleSingleQuotes(self):
 		return True
@@ -103,13 +103,14 @@ class PhpWrapp(PhpSettings):
 
 		consoleArr = consoleStr.split(separator)
 
-		t = consoleArr[0]
+		text = var.replace("'", "\\'")
+		text = text.replace("\"", "\\\"")
+		text = '\'' + text + '\''
 
-		if len(consoleArr) >= 2:
-			v = ', '.join(consoleArr[1:])
-		else:
-			v = t
+		var = var.replace(";", ',')
 
+		v = ', '.join(consoleArr)
+			
 		tmpl = indent_str if insert_before else ("\n" + indent_str)
 
 		openPre = "echo '<pre>'; " if preTag else ""
@@ -118,7 +119,7 @@ class PhpWrapp(PhpSettings):
 		dieStr = " die();" if dieAfterLog else ""
 
 		a = "{2}{0}({1});{3}{4}".format("->".join(consoleFunc), v, openPre, closePre, dieStr)
-		a = a.format(variable=var)
+		a = a.format(title=text, variable=var)
 
 		tmpl += a
 
