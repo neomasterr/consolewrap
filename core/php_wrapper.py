@@ -51,6 +51,9 @@ class PhpWrapp(PhpSettings):
 
 			var_text = view.substr(word).strip()
 
+			if view.substr(word.begin() - 1) == '$':
+				var_text = '$' + var_text
+
 			# if selection is empty and there is no word under cursor use clipboard
 			if not var_text:
 				var_text = sublime.get_clipboard()
@@ -118,7 +121,7 @@ class PhpWrapp(PhpSettings):
 
 		dieStr = " die();" if dieAfterLog else ""
 
-		a = "{2}{0}({1});{3}{4}".format("->".join(consoleFunc), v, openPre, closePre, dieStr)
+		a = "{2}{0}(__FILE__.':'.__LINE__, {1});{3}{4}".format("->".join(consoleFunc), v, openPre, closePre, dieStr)
 		a = a.format(title=text, variable=var)
 
 		tmpl += a
